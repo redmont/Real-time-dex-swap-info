@@ -1,0 +1,20 @@
+{
+  "name": "experiments",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@thanpolas/univ3prices": "^3.0.2",
+    "@uniswap/sdk-core": "^3.1.0",
+    "@uniswap/smart-order-router": "^3.2.0",
+    "@uniswap/v3-sdk": "^3.9.0",
+    "ethers": "^5.7.2",
+    "jsbi": "^3.2.5"
+  }
+}
