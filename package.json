@@ -1,14 +1,13 @@
 {
-  "name": "EXP",
+  "name": "deepanshu-uniswapv3-real-time-smart-router",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "AMOUNT_IN=11 TOKEN0=\"WETH\" TOKEN1=\"DAI\" node index.js"
   },
   "keywords": [
-    "uniswap price impact",
-    ""
+    "uniswap price impact"
   ],
   "author": "Deepanshu Singh",
   "license": "ISC",
