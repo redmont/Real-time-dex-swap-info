@@ -9,8 +9,6 @@ const {getTokenInfo} = require("erc20-token-list");
 const provider = new ethers.providers.JsonRpcProvider(process.env.INFURA_URL);
 const router = new AlphaRouter({chainId: 1, provider: provider});
 
-const amountIn = ethers.utils.parseEther(process.env.AMOUNT_IN);
-
 const [token0info, token1info] = [
     getTokenInfo(process.env.TOKEN0),
     getTokenInfo(process.env.TOKEN1),
@@ -32,8 +30,11 @@ const token1 = new Token(
     token1info.name
 );
 
+const amountIn = ethers.utils.parseUnits(process.env.AMOUNT_IN, token0info.decimals);
+
 const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 let count = 0;
+
 const init = async (token0, token1) => {
     console.log(
         `[${count}] Fetching updated details for ${token0info.symbol}/${token1info.symbol} ...`
@@ -47,6 +48,7 @@ const init = async (token0, token1) => {
     });
 
     console.log(`=========================================`);
+    console.log(`${new Date().toString()}\n`);
     console.log(`Quote Exact: ${route.quote.toFixed(2)} ${token1info.symbol}`);
     console.log(`Gas Adjusted Quote: ${route.quoteGasAdjusted.toFixed(2)} ${token1info.symbol}`);
     console.log(`Gas Used USD: ${route.estimatedGasUsedUSD.toFixed(6)}`);

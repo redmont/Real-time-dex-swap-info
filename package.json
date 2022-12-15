@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "init": "npm install",
     "test": "AMOUNT_IN=11 TOKEN0=\"WETH\" TOKEN1=\"DAI\" node index.js"
   },
   "keywords": [
@@ -12,7 +13,6 @@
   "author": "Deepanshu Singh",
   "license": "ISC",
   "dependencies": {
-    "@thanpolas/univ3prices": "^3.0.2",
     "@uniswap/sdk-core": "^3.1.0",
     "@uniswap/smart-order-router": "^3.2.0",
     "@uniswap/v3-sdk": "^3.9.0",
