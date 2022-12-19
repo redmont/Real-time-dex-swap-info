@@ -19,14 +19,8 @@ const {
 const {
     abi: UniswapV3Factory,
 } = require("@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json");
-const {
-    abi: QuoterABI,
-} = require("@uniswap/swap-router-contracts/artifacts/contracts/lens/Quoter.sol/Quoter.json");
 
 const provider = new ethers.providers.JsonRpcProvider(process.env.INFURA_URL);
-
-const quoterAddress = "0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6";
-const quoterContract = new ethers.Contract(quoterAddress, QuoterABI, provider);
 
 const {addresses} = require("./Utility.js");
 
@@ -69,6 +63,7 @@ async function getPoolState(poolContract) {
 
 async function getPool(tokenA, tokenB, fee) {
     const poolAddress = await factoryContract.getPool(tokenA.address, tokenB.address, fee);
+    if (poolAddress === ethers.constants.AddressZero) return false;
     const poolContract = new ethers.Contract(poolAddress, IUniswapV3PoolABI, provider);
     const [immutables, state] = await Promise.all([
         getPoolImmutables(poolContract),
@@ -116,23 +111,31 @@ const UniswapV3direct = async (tokenA, tokenB) => {
         getPool(tokenA, tokenB, FeeAmount.MEDIUM),
         getPool(tokenA, tokenB, FeeAmount.HIGH),
     ]).then(async (pools) => {
+        pools = pools.filter((pool) => {
+            return pool !== false ? pool : false;
+        });
         //const tradeObject = new Trade();
+
         const trade = await Trade.bestTradeExactIn(
-            [pools[0], pools[1], pools[2]],
+            [pools[1]],
             CurrencyAmount.fromRawAmount(tokenA, amountIn),
             tokenB,
-            {maxNumResults: 1, maxHops: 3}
+            {maxNumResults: 1, maxHops: pools.length}
         );
+
         //console.log(trade[0].swaps[0].route.pools);
 
         msg.timestamp = new Date().toString();
-        msg[`Output Amount`] = trade[0].outputAmount.toFixed(6);
-        msg[`Minimum amount out after slippage`] = trade[0]
-            .minimumAmountOut(new Percent(parseInt(process.env.SLIPPAGE_TOLERANCE), 100))
-            .toFixed();
-        msg[`Execution Price`] = trade[0].executionPrice.toFixed(6);
-        msg[`Price Impact`] = trade[0].priceImpact.toFixed(6);
-        msg["Liquidity Provider Fee"] = trade[0]?.swaps[0]?.route?.pools[0]?.fee;
+        msg[`Output Amount`] = parseFloat(trade[0].outputAmount.toFixed(6));
+        msg[`Minimum amount out after slippage`] = parseFloat(
+            trade[0]
+                .minimumAmountOut(new Percent(parseInt(process.env.SLIPPAGE_TOLERANCE), 100))
+                .toFixed()
+        );
+        //msg[`Execution Price`] = parseFloat(trade[0].executionPrice.toFixed(6));
+        msg[`Price Impact`] = parseFloat(trade[0].priceImpact.toFixed(6));
+        msg["Liquidity Provider Fee"] =
+            parseFloat(trade[0]?.swaps[0]?.route?.pools[0]?.fee) / 10000;
     });
     return msg;
 };

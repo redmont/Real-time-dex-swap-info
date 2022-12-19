@@ -24,17 +24,18 @@ const UniswapV3AutoRouter = async (token0, token1) => {
     let msg = {DEX: "Uniswap V3 - Auto Router (multipool route)"};
 
     msg.timestamp = new Date().toString();
-    msg[`Quote Exact`] = route.quote.toFixed(6);
-    msg[`Minimum amount out after slippage`] = route.trade
-        .minimumAmountOut(new Percent(parseInt(process.env.SLIPPAGE_TOLERANCE), 100))
-        .toFixed();
-
-    //msg[`Gas Adjusted Quote`] = route.quoteGasAdjusted.toFixed(6);
-    msg[`Price Impact`] = route.trade.priceImpact.toFixed(6);
-    msg[`Gas Used`] = route.estimatedGasUsed.toString();
-    msg[`Gas Price`] = ethers.utils.formatUnits(route.gasPriceWei, "gwei");
-    msg[`Gas Used USD`] = route.estimatedGasUsedUSD.toFixed(6);
-    msg[`Execution Price`] = route.trade.executionPrice.toFixed(6);
+    msg[`Quote Exact`] = parseFloat(route.quote.toFixed(6));
+    msg[`Minimum amount out after slippage`] = parseFloat(
+        route.trade
+            .minimumAmountOut(new Percent(parseInt(process.env.SLIPPAGE_TOLERANCE), 100))
+            .toFixed()
+    );
+    msg[`Gas Adjusted Quote`] = route.quoteGasAdjusted.toFixed(6);
+    msg[`Price Impact`] = parseFloat(route.trade.priceImpact.toFixed(6));
+    msg[`Gas Used`] = parseFloat(route.estimatedGasUsed.toString());
+    msg[`Gas Price`] = parseFloat(ethers.utils.formatUnits(route.gasPriceWei, "gwei"));
+    msg[`Gas Used USD`] = parseFloat(route.estimatedGasUsedUSD.toFixed(6));
+    //msg[`Execution Price`] = parseFloat(route.trade.executionPrice.toFixed(6));
 
     return msg;
     //await timeout(1000);

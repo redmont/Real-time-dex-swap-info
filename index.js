@@ -17,8 +17,9 @@ let count = 0;
 console.log(`\n=========================================`);
 console.log(`Pair: ${token0info.symbol}/${token1info.symbol}`);
 console.log(`Input: ${process.env.AMOUNT_IN} ${token0info.symbol}`);
-console.log(`SLIPPAGE TOLERANCE: ${process.env.SLIPPAGE_TOLERANCE}%`);
-console.log(`TRANSACTION DEADLINE: ${process.env.TRANSACTION_DEADLINE} sec`);
+console.log(`Slippage Tolerance: ${process.env.SLIPPAGE_TOLERANCE}%`);
+console.log(`Transaction Deadline: ${process.env.TRANSACTION_DEADLINE} sec`);
+console.log(`Call intervals: ${process.env.TIMEOUT}s`);
 console.log(`=========================================\n\n`);
 
 const init = async () => {
@@ -26,10 +27,25 @@ const init = async () => {
         `\n[${count}] Fetching updated details for ${token0info.symbol}/${token1info.symbol} ...\n`
     );
 
+    global.feeData = await global.provider.getFeeData();
+    console.log(`gasPrice: ${ethers.utils.formatUnits(global.feeData.gasPrice, "gwei")} gwei`);
+    console.log(
+        `lastBaseFeePerGas: ${ethers.utils.formatUnits(
+            global.feeData.lastBaseFeePerGas,
+            "gwei"
+        )} gwei`
+    );
+    console.log(
+        `maxPriorityFeePerGas: ${ethers.utils.formatUnits(
+            global.feeData.maxPriorityFeePerGas,
+            "gwei"
+        )} gwei`
+    );
+
     let [uniswapV3AutoRouter, uniswapV3direct, sushiMultiHops, sushiDirect] = await Promise.all([
         UniswapV3AutoRouter(token0info, token1info),
-        UniswapV3direct(token0info, token1info),
         SushiMultiHops(token0info, token1info),
+        UniswapV3direct(token0info, token1info),
         SushiDirect(token0info, token1info),
     ]);
 
@@ -38,7 +54,7 @@ const init = async () => {
     console.log(sushiMultiHops);
     console.log(sushiDirect);
 
-    await timeout(1000);
+    await timeout(process.env.TIMEOUT || 1000);
     count++;
     await init();
 };
