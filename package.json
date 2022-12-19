@@ -13,11 +13,13 @@
   "author": "Deepanshu Singh",
   "license": "ISC",
   "dependencies": {
+    "@sushiswap/sdk": "^5.0.0-canary.116",
     "@uniswap/sdk-core": "^3.1.0",
     "@uniswap/smart-order-router": "^3.2.0",
     "@uniswap/v3-sdk": "^3.9.0",
     "erc20-token-list": "^0.0.3",
     "ethers": "^5.7.2",
-    "jsbi": "^3.2.5"
+    "jsbi": "^3.2.5",
+    "simple-sushiswap-sdk": "^1.0.2"
   }
 }
