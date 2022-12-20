@@ -1,5 +1,7 @@
 require("dotenv").config();
 const {ethers} = require("ethers");
+const {getEthPriceNow} = require("get-eth-price");
+
 const {getTokenFromSymbol} = require("./Utility.js");
 const token0info = getTokenFromSymbol(process.env.TOKEN0);
 const token1info = getTokenFromSymbol(process.env.TOKEN1);
@@ -28,6 +30,11 @@ const init = async () => {
     );
 
     global.feeData = await global.provider.getFeeData();
+    getEthPriceNow().then((data) => {
+        global.currentETHUSDPrice = data[Object.keys(data)[0]]?.ETH?.USD;
+        console.log(`Current ETH/USD price: ${global.currentETHUSDPrice}\n`);
+    });
+
     console.log(`gasPrice: ${ethers.utils.formatUnits(global.feeData.gasPrice, "gwei")} gwei`);
     console.log(
         `lastBaseFeePerGas: ${ethers.utils.formatUnits(

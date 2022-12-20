@@ -15,7 +15,7 @@ const SushiMultiHops = async (tokenA, tokenB) => {
         providerUrl: process.env.INFURA_URL,
         chainId: ChainId.MAINNET,
         settings: new SushiswapPairSettings({
-            slippage: process.env.SLIPPAGE_TOLERANCE,
+            slippage: process.env.SLIPPAGE_TOLERANCE / 100,
             deadlineMinutes: process.env.TRANSACTION_DEADLINE,
             disableMultihops: false,
         }),
@@ -37,24 +37,16 @@ const SushiMultiHops = async (tokenA, tokenB) => {
             value: trade.transaction.value,
         });
         msg["Gas Used"] = parseFloat(BigNumber.from(gasUsed).toString());
-        const gasPriceInETH = ethers.utils.formatUnits(
-            BigNumber.from(global.feeData.gasPrice).toString(),
-            "ether"
+
+        let gasFeeInGwei = BigNumber.from(global.feeData.lastBaseFeePerGas).add(
+            BigNumber.from(global.feeData.maxPriorityFeePerGas)
         );
-
-        const gasFeeInGwei = ethers.utils.formatUnits(global.feeData.gasPrice, "gwei");
-
-        msg["Gas Price"] = parseFloat(ethers.utils.formatUnits(global.feeData.gasPrice, "gwei"));
-        msg["Gas Fee in ETH"] = (gasFeeInGwei * gasUsed) / 10 ** 9;
-        // const gasFeeETH = BigNumber.from(gasUsed); //.mul();
-        //console.log(gasFeeETH);
+        gasFeeInGwei = parseFloat(ethers.utils.formatUnits(gasFeeInGwei, "gwei"));
+        msg["Gas Price"] = gasFeeInGwei;
+        const gasFeeInETH = (gasFeeInGwei * gasUsed) / 10 ** 9;
+        msg["Gas Fee in ETH"] = gasFeeInETH;
+        msg["Gas Fee in USD"] = global.currentETHUSDPrice * gasFeeInETH;
     } catch (error) {}
-
-    /*const gasPrice = await global.provider.getGasPrice();
-
-    msg[`Gas Price`] = parseFloat(
-        BigNumber.from(gasPrice).div(BigNumber.from(10).pow(9)).toString()
-    );*/
 
     return msg;
 };

@@ -30,11 +30,15 @@ const UniswapV3AutoRouter = async (token0, token1) => {
             .minimumAmountOut(new Percent(parseInt(process.env.SLIPPAGE_TOLERANCE), 100))
             .toFixed()
     );
-    msg[`Gas Adjusted Quote`] = route.quoteGasAdjusted.toFixed(6);
+    msg[`Gas Adjusted Quote`] = parseFloat(route.quoteGasAdjusted.toFixed(6));
     msg[`Price Impact`] = parseFloat(route.trade.priceImpact.toFixed(6));
     msg[`Gas Used`] = parseFloat(route.estimatedGasUsed.toString());
     msg[`Gas Price`] = parseFloat(ethers.utils.formatUnits(route.gasPriceWei, "gwei"));
+
+    const gasFeeInGwei = ethers.utils.formatUnits(route.gasPriceWei, "gwei");
+    msg["Gas Fee in ETH"] = (gasFeeInGwei * route.estimatedGasUsed) / 10 ** 9;
     msg[`Gas Used USD`] = parseFloat(route.estimatedGasUsedUSD.toFixed(6));
+
     //msg[`Execution Price`] = parseFloat(route.trade.executionPrice.toFixed(6));
 
     return msg;
