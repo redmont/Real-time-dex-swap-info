@@ -28,7 +28,7 @@ const SushiMultiHops = async (tokenA, tokenB) => {
     msg.timestamp = new Date().toString();
     msg["Expected Output"] = parseFloat(trade.expectedConvertQuote);
     msg["Minimum amount after slippage"] = parseFloat(trade.minAmountConvertQuote);
-    msg["Liquidity Provider Fee"] = parseFloat(trade.liquidityProviderFee) * 100;
+    msg["Liquidity Provider Fee"] = parseFloat(0.3);
     msg["Route Path"] = trade.routeText;
     try {
         const gasUsed = await global.provider.estimateGas({
