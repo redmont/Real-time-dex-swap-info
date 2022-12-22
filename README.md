@@ -2,6 +2,17 @@
 
 To run
 
+Install nodejs (using Homebrew)
+
+```
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+brew update
+export PATH="/usr/local/bin:$PATH"
+brew install node
+```
+
+Run script:
+
 ```
 npm install
 AMOUNT_IN=10 TOKEN0=WETH TOKEN1=USDT node index.js
